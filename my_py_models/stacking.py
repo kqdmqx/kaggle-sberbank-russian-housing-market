@@ -1,7 +1,7 @@
 # coding=utf-8
 
 import numpy as np
-from sklearn.cross_validation import KFold
+from sklearn.model_selection import KFold
 
 
 class Stacking:
@@ -46,7 +46,8 @@ class Stacking:
                 X_train = X[train_idx]
                 y_train = y[train_idx]
                 X_holdout = X[test_idx]
-                clf.fit(X_train, y_train)
+                y_holdout = y[test_idx]
+                clf.fit(X_train, y_train, X_holdout, y_holdout)
                 y_pred = clf.predict(X_holdout)[:]
                 S_train[test_idx, i] = y_pred
                 S_test_i[:, j] = clf.predict(T)[:]
