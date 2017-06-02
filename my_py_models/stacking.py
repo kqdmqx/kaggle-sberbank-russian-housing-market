@@ -33,8 +33,8 @@ class Stacking:
         y = np.array(y)
         T = np.array(T)
 
-        folds = list(KFold(len(y), n_folds=self.n_folds,
-                           shuffle=True, random_state=2016))
+        kf = KFold(n_splits=self.n_folds, shuffle=True, random_state=2016)
+        folds = list(kf.split(X, y))
 
         S_train = np.zeros((X.shape[0], len(self.base_models)))
         S_test = np.zeros((T.shape[0], len(self.base_models)))
