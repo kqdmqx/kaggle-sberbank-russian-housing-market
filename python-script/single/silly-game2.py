@@ -274,18 +274,18 @@ df_all['rel_kitch_sq'] = df_all['kitch_sq'] / df_all['full_sq'].astype(float)
 df_all.drop(['timestamp', 'timestamp_macro'], axis=1, inplace=True)
 
 
-factorize = lambda t: pd.factorize(t[1])[0]
+# factorize = lambda t: pd.factorize(t[1])[0]
 
-df_obj = df_all.select_dtypes(include=['object'])
+# df_obj = df_all.select_dtypes(include=['object'])
 
-X_all = np.c_[
-    df_all.select_dtypes(exclude=['object']).values,
-    np.array(list(map(factorize, df_obj.iteritems()))).T
-]
-print(X_all.shape)
+# X_all = np.c_[
+#     df_all.select_dtypes(exclude=['object']).values,
+#     np.array(list(map(factorize, df_obj.iteritems()))).T
+# ]
+# print(X_all.shape)
 
-X_train = X_all[:num_train]
-X_test = X_all[num_train:]
+# X_train = X_all[:num_train]
+# X_test = X_all[num_train:]
 
 
 # Deal with categorical values

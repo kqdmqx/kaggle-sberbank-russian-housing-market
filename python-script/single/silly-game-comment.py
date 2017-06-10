@@ -48,7 +48,104 @@ bad_index = test[test.full_sq < 5].index
 test.ix[bad_index, "full_sq"] = np.NaN
 
 # @kitch_sq, 个案
+kitch_is_build_year = [# @life_sq, 错误
+bad_index = train[train.life_sq > train.full_sq].index
+train.ix[bad_index, "life_sq"] = np.NaN
+
+# @full_sq, 个案
+equal_index = [601,1896,2791]
+test.ix[equal_index, "life_sq"] = test.ix[equal_index, "full_sq"]
+
+# @life_sq, 错误
+bad_index = test[test.life_sq > test.full_sq].index
+test.ix[bad_index, "life_sq"] = np.NaN
+bad_index = train[train.life_sq < 5].index
+train.ix[bad_index, "life_sq"] = np.NaN
+bad_index = test[test.life_sq < 5].index
+test.ix[bad_index, "life_sq"] = np.NaN
+
+# @full_sq, 错误
+bad_index = train[train.full_sq < 5].index
+train.ix[bad_index, "full_sq"] = np.NaN
+bad_index = test[test.full_sq < 5].index
+test.ix[bad_index, "full_sq"] = np.NaN
+
+# @kitch_sq, 个案
 kitch_is_build_year = [13117]
+train.ix[kitch_is_build_year, "build_year"] = train.ix[kitch_is_build_year, "kitch_sq"]
+
+# @kitch_sq, 错误
+bad_index = train[train.kitch_sq >= train.life_sq].index
+train.ix[bad_index, "kitch_sq"] = np.NaN
+bad_index = test[test.kitch_sq >= test.life_sq].index
+test.ix[bad_index, "kitch_sq"] = np.NaN
+bad_index = train[(train.kitch_sq == 0).values + (train.kitch_sq == 1).values].index
+train.ix[bad_index, "kitch_sq"] = np.NaN
+bad_index = test[(test.kitch_sq == 0).values + (test.kitch_sq == 1).values].index
+test.ix[bad_index, "kitch_sq"] = np.NaN
+
+# @full_sq, 错误
+bad_index = train[(train.full_sq > 210) & (train.life_sq / train.full_sq < 0.3)].index
+train.ix[bad_index, "full_sq"] = np.NaN
+bad_index = test[(test.full_sq > 150) & (test.life_sq / test.full_sq < 0.3)].index
+test.ix[bad_index, "full_sq"] = np.NaN
+
+# @life_sq @full_sq, 错误
+bad_index = train[train.life_sq > 300].index
+train.ix[bad_index, ["life_sq", "full_sq"]] = np.NaN
+bad_index = test[test.life_sq > 200].index
+test.ix[bad_index, ["life_sq", "full_sq"]] = np.NaN
+
+
+train.product_type.value_counts(normalize= True)
+test.product_type.value_counts(normalize= True)
+
+# @build_year, 错误
+bad_index = train[train.build_year < 1500].index
+train.ix[bad_index, "build_year"] = np.NaN
+bad_index = test[test.build_year < 1500].index
+test.ix[bad_index, "build_year"] = np.NaN
+
+
+# @num_room, 错误
+bad_index = train[train.num_room == 0].index 
+train.ix[bad_index, "num_room"] = np.NaN
+bad_index = test[test.num_room == 0].index 
+test.ix[bad_index, "num_room"] = np.NaN
+
+# @num_room, 个案
+bad_index = [10076, 11621, 17764, 19390, 24007, 26713, 29172]
+train.ix[bad_index, "num_room"] = np.NaN
+bad_index = [3174, 7313]
+test.ix[bad_index, "num_room"] = np.NaN
+
+# @floor，@max_floor，错误
+bad_index = train[(train.floor == 0).values * (train.max_floor == 0).values].index
+train.ix[bad_index, ["max_floor", "floor"]] = np.NaN
+
+# @floor，错误
+bad_index = train[train.floor == 0].index
+train.ix[bad_index, "floor"] = np.NaN
+bad_index = train[train.max_floor == 0].index
+train.ix[bad_index, "max_floor"] = np.NaN
+bad_index = test[test.max_floor == 0].index
+test.ix[bad_index, "max_floor"] = np.NaN
+bad_index = train[train.floor > train.max_floor].index
+train.ix[bad_index, "max_floor"] = np.NaN
+bad_index = test[test.floor > test.max_floor].index
+test.ix[bad_index, "max_floor"] = np.NaN
+train.floor.describe(percentiles= [0.9999])
+
+# @floor, 错误
+bad_index = [23584]
+train.ix[bad_index, "floor"] = np.NaN
+train.material.value_counts()
+test.material.value_counts()
+train.state.value_counts()
+
+# @state, 错误
+bad_index = train[train.state == 33].index
+train.ix[bad_index, "state"] = np.NaN]
 train.ix[kitch_is_build_year, "build_year"] = train.ix[kitch_is_build_year, "kitch_sq"]
 
 # @kitch_sq, 错误
@@ -218,16 +315,19 @@ y_predict = np.round(y_predict * 0.99)
 gunja_output = pd.DataFrame({'id': id_test, 'price_doc': y_predict})
 gunja_output.head()
 
-
-
+##############################################################################
+# train_test removeOutlier
+# gunja
+##############################################################################
 
 train = pd.read_csv('../input/train.csv')
 test = pd.read_csv('../input/test.csv')
 id_test = test.id
 
+# @ transform
 mult = .969
-
 y_train = train["price_doc"] * mult + 20
+
 x_train = train.drop(["id", "timestamp", "price_doc"], axis=1)
 x_test = test.drop(["id", "timestamp"], axis=1)
 
@@ -236,7 +336,7 @@ for c in x_train.columns:
         lbl = preprocessing.LabelEncoder()
         lbl.fit(list(x_train[c].values)) 
         x_train[c] = lbl.transform(list(x_train[c].values))
-        
+
 for c in x_test.columns:
     if x_test[c].dtype == 'object':
         lbl = preprocessing.LabelEncoder()
@@ -262,6 +362,11 @@ model = xgb.train(dict(xgb_params, silent=0), dtrain, num_boost_round= num_boost
 y_predict = model.predict(dtest)
 output = pd.DataFrame({'id': id_test, 'price_doc': y_predict})
 output.head()
+
+##############################################################################
+# train_test originData 
+# _louis
+##############################################################################
 
 # Any results you write to the current directory are saved as output.
 df_train = pd.read_csv("../input/train.csv", parse_dates=['timestamp'])
@@ -305,18 +410,18 @@ df_all['rel_kitch_sq'] = df_all['kitch_sq'] / df_all['full_sq'].astype(float)
 df_all.drop(['timestamp', 'timestamp_macro'], axis=1, inplace=True)
 
 
-factorize = lambda t: pd.factorize(t[1])[0]
+# factorize = lambda t: pd.factorize(t[1])[0]
 
-df_obj = df_all.select_dtypes(include=['object'])
+# df_obj = df_all.select_dtypes(include=['object'])
 
-X_all = np.c_[
-    df_all.select_dtypes(exclude=['object']).values,
-    np.array(list(map(factorize, df_obj.iteritems()))).T
-]
-print(X_all.shape)
+# X_all = np.c_[
+#     df_all.select_dtypes(exclude=['object']).values,
+#     np.array(list(map(factorize, df_obj.iteritems()))).T
+# ]
+# print(X_all.shape)
 
-X_train = X_all[:num_train]
-X_test = X_all[num_train:]
+# X_train = X_all[:num_train]
+# X_test = X_all[num_train:]
 
 
 # Deal with categorical values
@@ -359,8 +464,14 @@ model = xgb.train(dict(xgb_params, silent=0), dtrain, num_boost_round=num_boost_
 y_pred = model.predict(dtest)
 
 df_sub = pd.DataFrame({'id': id_test, 'price_doc': y_pred})
-
 df_sub.head()
+
+##############################################################################
+# train_test originData 
+# _bruno
+##############################################################################
+
+
 first_result = output.merge(df_sub, on="id", suffixes=['_louis','_bruno'])
 first_result["price_doc"] = np.exp( .71*np.log(first_result.price_doc_louis) + 
                                     .29*np.log(first_result.price_doc_bruno) )
