@@ -5,7 +5,7 @@ from sklearn.model_selection import KFold
 
 
 class Stacking:
-    def __init__(self, n_folds, base_models):
+    def __init__(self, n_folds, base_models, random_state=2016):
         '''
         Ensemble Stacking Level
         Parameters:
@@ -15,6 +15,7 @@ class Stacking:
         '''
         self.n_folds = n_folds
         self.base_models = base_models
+        self.random_state = random_state
 
     def fit_predict(self, X, y, T):
         '''
@@ -33,7 +34,7 @@ class Stacking:
         y = np.array(y)
         T = np.array(T)
 
-        kf = KFold(n_splits=self.n_folds, shuffle=True, random_state=2016)
+        kf = KFold(n_splits=self.n_folds, shuffle=True, random_state=self.random_state)
         folds = list(kf.split(X, y))
 
         S_train = np.zeros((X.shape[0], len(self.base_models)))
