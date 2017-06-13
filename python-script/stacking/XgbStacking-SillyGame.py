@@ -64,7 +64,9 @@ xgb_params = {
     'colsample_bytree': 0.7,
     'objective': 'reg:linear',
     'eval_metric': 'rmse',
-    'silent': 1
+    'silent': 1,
+    'booster': 'gbtree',
+    'tuneLength': 3
 }
 
 
@@ -77,7 +79,7 @@ for pred_oof_single in pred_oof.T:
     print np.sqrt(mean_squared_error(np.log(pred_oof_single), np.log(y_train)))
 
 df_sub = pd.DataFrame({'id': test_id, 'price_doc': pred_test[:, 0]})
-df_sub.to_csv(join(OUTPUT_PATH, 'stacking/Submission-SillyGame-XgbStackingTrans-2017061200-Test.csv'), index=False)
+df_sub.to_csv(join(OUTPUT_PATH, 'stacking/Submission-SillyGame-XgbStackingTrans-2017061201-Test.csv'), index=False)
 
 df_oof = pd.DataFrame({'id': train_id, 'price_doc': pred_oof[:, 0]})
-df_oof.to_csv(join(OUTPUT_PATH, 'stacking/Submission-SillyGame-XgbStackingTrans-2017061200-OutOfFold.csv'), index=False)
+df_oof.to_csv(join(OUTPUT_PATH, 'stacking/Submission-SillyGame-XgbStackingTrans-2017061201-OutOfFold.csv'), index=False)
